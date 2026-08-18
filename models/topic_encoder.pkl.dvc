@@ -1,0 +1,5 @@
+outs:
+- md5: 1e6f349824ece695263e6413ab4b8d94
+  size: 533
+  hash: md5
+  path: topic_encoder.pkl
