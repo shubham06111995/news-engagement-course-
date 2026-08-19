@@ -1,0 +1,16 @@
+# k8s-job.yaml
+# A Kubernetes "Job" runs a container to completion, then stops.
+# This fits our container perfectly - it trains, predicts, then exits.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: news-engagement-job
+spec:
+  template:
+    spec:
+      containers:
+        - name: news-engagement
+          image: news-engagement:latest
+          imagePullPolicy: Never   # use the local image, don't try to download it
+      restartPolicy: Never
+  backoffLimit: 2
