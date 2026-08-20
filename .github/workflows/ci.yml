@@ -1,0 +1,35 @@
+# .github/workflows/ci.yml
+# Runs automatically on every push to GitHub.
+# Trains the model, then runs tests against it - catching broken code
+# BEFORE it can be deployed.
+name: CI - Test the Model
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pytest
+
+      - name: Train the model
+        run: python src/train.py
+
+      - name: Run tests
+        run: pytest tests/ -v
