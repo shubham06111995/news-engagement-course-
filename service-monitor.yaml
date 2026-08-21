@@ -1,0 +1,20 @@
+# service-monitor.yaml
+# Tells Prometheus WHERE to find our API's /metrics endpoint.
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: news-engagement-monitor
+  namespace: monitoring
+  labels:
+    release: monitoring   # must match kube-prometheus-stack's selector
+spec:
+  namespaceSelector:
+    matchNames:
+      - default   # our API pod runs in the "default" namespace
+  selector:
+    matchLabels:
+      app: isvc.news-engagement-isvc-predictor   # matches our pod's exact label
+  endpoints:
+    - targetPort: 8000    # references the container port directly (port has no name)
+      path: /metrics
+      interval: 15s
