@@ -25,3 +25,8 @@ TARGET_COLUMN = "engagement"
 TEST_SIZE = 0.25
 RANDOM_STATE = 42
 N_ESTIMATORS = 100
+
+# Model V2 paths (retrained on March data)
+MODEL_V2_PATH = "models/model_v2.pkl"
+TOPIC_ENCODER_V2_PATH = "models/topic_encoder_v2.pkl"
+DAY_ENCODER_V2_PATH = "models/day_encoder_v2.pkl"

@@ -1,0 +1,5 @@
+outs:
+- md5: 38e34cd60385ad0aebc1bf4d0f5a6ba8
+  size: 515
+  hash: md5
+  path: day_encoder_v2.pkl
