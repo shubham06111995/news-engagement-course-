@@ -24,7 +24,7 @@ TARGET_COLUMN = "engagement"
 # Training settings
 TEST_SIZE = 0.25
 RANDOM_STATE = 42
-N_ESTIMATORS = 100
+N_ESTIMATORS = 3
 
 # Model V2 paths (retrained on March data)
 MODEL_V2_PATH = "models/model_v2.pkl"
