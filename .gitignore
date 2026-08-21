@@ -6,3 +6,6 @@ mlruns/
 mlartifacts/
 mlflow.db
 .DS_Store
+actions-runner/
+data_drift_report.html
+kserve-quick-install.sh

@@ -27,7 +27,7 @@ def predict(df):
 
 
 if __name__ == "__main__":
-    # A few "mystery articles" to test the model on
+    # A few "articles" to test the model on
     mystery_articles = pd.DataFrame([
         {"topic": "Technology", "title_length": 42, "article_length": 1100,
          "publish_hour": 10, "day_of_week": "Tue", "is_trending": 1},

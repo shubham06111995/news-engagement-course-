@@ -46,7 +46,7 @@ def main():
         print(f"Model V1 (January) accuracy: {accuracy:.4f}")
 
         mlflow.log_metric("accuracy", accuracy)
-        mlflow.sklearn.log_model(model, "model")
+        mlflow.sklearn.log_model(model, name="model")
 
         # Also save locally, same as train.py does, so predict.py still works
         import joblib
