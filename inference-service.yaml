@@ -1,5 +1,4 @@
 # inference-service.yaml
-# A KServe "InferenceService" using a Custom Predictor (our own FastAPI image).
 apiVersion: serving.kserve.io/v1beta1
 kind: InferenceService
 metadata:
@@ -11,6 +10,7 @@ spec:
     containers:
       - name: kserve-container
         image: news-engagement-api:latest
+        imagePullPolicy: Never
         ports:
           - containerPort: 8000
             protocol: TCP

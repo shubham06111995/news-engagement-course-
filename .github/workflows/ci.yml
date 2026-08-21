@@ -1,8 +1,4 @@
 # .github/workflows/ci.yml
-# CI (test) runs on GitHub's cloud runners.
-# CD (deploy) runs on YOUR self-hosted runner (your Mac), since it needs
-# access to your local Docker and Kubernetes cluster, which GitHub's
-# cloud runners cannot reach.
 name: CI/CD - Test and Deploy the Model
 
 on:
@@ -35,8 +31,8 @@ jobs:
         run: pytest tests/ -v
 
   deploy:
-    needs: test   # only runs if the test job succeeds
-    runs-on: self-hosted   # runs on YOUR Mac, not GitHub's cloud
+    needs: test
+    runs-on: self-hosted
     steps:
       - name: Check out the code
         uses: actions/checkout@v4
@@ -47,10 +43,17 @@ jobs:
       - name: Load image into local Kind cluster
         run: kind load docker-image news-engagement-api:latest --name news-cluster
 
-      - name: Restart the KServe InferenceService to use the new image
+      - name: Delete the running pod to force a fresh restart
+        # KServe's controller reverts "kubectl rollout restart" annotations,
+        # since it reconciles the Deployment to match its own desired state.
+        # Deleting the pod directly bypasses this - the ReplicaSet immediately
+        # recreates it, picking up the freshly loaded image.
+        run: kubectl delete pod -l app=isvc.news-engagement-isvc-predictor
+
+      - name: Wait for the new pod to be ready
         run: |
-          kubectl rollout restart deployment news-engagement-isvc-predictor
-          kubectl rollout status deployment news-engagement-isvc-predictor --timeout=120s
+          sleep 5
+          kubectl wait --for=condition=Ready pod -l app=isvc.news-engagement-isvc-predictor --timeout=120s
 
       - name: Verify deployment
-        run: kubectl get pods | grep news-engagement-isvc
+        run: kubectl get pods -o wide | grep news-engagement-isvc
