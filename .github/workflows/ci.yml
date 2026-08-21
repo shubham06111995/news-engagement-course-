@@ -1,8 +1,9 @@
 # .github/workflows/ci.yml
-# Runs automatically on every push to GitHub.
-# Trains the model, then runs tests against it - catching broken code
-# BEFORE it can be deployed.
-name: CI - Test the Model
+# CI (test) runs on GitHub's cloud runners.
+# CD (deploy) runs on YOUR self-hosted runner (your Mac), since it needs
+# access to your local Docker and Kubernetes cluster, which GitHub's
+# cloud runners cannot reach.
+name: CI/CD - Test and Deploy the Model
 
 on:
   push:
@@ -13,7 +14,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-
     steps:
       - name: Check out the code
         uses: actions/checkout@v4
@@ -33,3 +33,24 @@ jobs:
 
       - name: Run tests
         run: pytest tests/ -v
+
+  deploy:
+    needs: test   # only runs if the test job succeeds
+    runs-on: self-hosted   # runs on YOUR Mac, not GitHub's cloud
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v4
+
+      - name: Build the Docker image
+        run: docker build -f Dockerfile.serve -t news-engagement-api:latest .
+
+      - name: Load image into local Kind cluster
+        run: kind load docker-image news-engagement-api:latest --name news-cluster
+
+      - name: Restart the KServe InferenceService to use the new image
+        run: |
+          kubectl rollout restart deployment news-engagement-isvc-predictor
+          kubectl rollout status deployment news-engagement-isvc-predictor --timeout=120s
+
+      - name: Verify deployment
+        run: kubectl get pods | grep news-engagement-isvc
