@@ -52,7 +52,7 @@ class Article(BaseModel):
 @app.get("/health")
 def health():
     REQUEST_COUNT.labels(endpoint="/health").inc()
-    return {"status": "ok"}
+    return {"status": "ok", "version": "v2-deployed-via-cicd"}
 
 
 @app.get("/metrics")
